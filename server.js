@@ -1,30 +1,39 @@
 const express = require('express');
 const path = require('path');
+const hbs = require('express-handlebars');
 const app = express();
+
+app.set('view engine', '.hbs');
+app.engine('hbs', hbs({ extname: 'hbs', layoutsDir: './layouts', defaultLayout: 'main' }));
 
 app.use(express.static(path.join(__dirname, '/public')));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '/views/home.html'));
+  res.render('index');
 });
 
-app.get('/home', (req, res) => {
-  res.sendFile(path.join(__dirname, '/views/home.html'));
+app.get('/hello/:name', (req, res) => {
+  res.render('hello', { name: req.params.name });
 });
 
 app.get('/about', (req, res) => {
-  res.sendFile(path.join(__dirname, '/views/about.html'));
+  res.render('about');
 });
 
-app.use((req, res, next) => {
-  res.show = (name) => {
-    res.sendFile(path.join(__dirname, `/views/user/${name}`));
-  };
-  next();
+app.get('/contact', (req, res) => {
+  res.render('contact');
+});
+
+app.get('/info', (req, res) => {
+  res.render('info');
+});
+
+app.get('/history', (req, res) => {
+  res.render('history', { layout: 'dark' });
 });
 
 app.use((req, res) => {
-  res.status(404).sendFile(path.join(__dirname, '/views/404.html'));
+  res.status(404).send('404 not found...');
 });
 
 app.listen(8000, () => {
