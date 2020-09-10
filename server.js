@@ -5,7 +5,7 @@ const app = express();
 
 app.set('view engine', '.hbs');
 app.engine('hbs', hbs({ extname: 'hbs', layoutsDir: './layouts', defaultLayout: 'main' }));
-
+app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '/public')));
 
 app.get('/', (req, res) => {
@@ -29,11 +29,20 @@ app.get('/info', (req, res) => {
 });
 
 app.get('/history', (req, res) => {
-  res.render('history', { layout: 'dark' });
+  res.render('history');
 });
 
 app.post('/contact/send-message', (req, res) => {
-  res.json(req.body);
+
+  const { author, sender, title, message, input } = req.body;
+ 
+  if(author && sender && title && message && input) {
+  
+    res.render('contact', { isSent: true ,file:input});
+  }
+  else {
+    res.render('contact', { isError: true });
+  }
 });
 
 app.use((req, res) => {
