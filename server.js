@@ -4,6 +4,13 @@ const app = express();
 
 app.use(express.static(path.join(__dirname, '/public')));
 
+app.use((req, res, next) => {
+  res.show = (name) => {
+    res.sendFile(path.join(__dirname, `/views/${name}`));
+  };
+  next();
+});
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/views/home.html'));
 });
@@ -16,11 +23,8 @@ app.get('/about', (req, res) => {
   res.sendFile(path.join(__dirname, '/views/about.html'));
 });
 
-app.use((req, res, next) => {
-  res.show = (name) => {
-    res.sendFile(path.join(__dirname, `/views/user/${name}`));
-  };
-  next();
+app.get('/user/*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/views/user/forbidden.html'));
 });
 
 app.use((req, res) => {
